@@ -1,0 +1,1 @@
+{"qid": "8813f87c0bdd11eba7f7acde48001122", "prediction": "The film Polish-Russian War was directed by Samuel Goldwyn. Samuel Goldwyn's mother was Sophie Goldwyn. So the answer is Sophie Goldwyn.</s>", "retrieve_count": 1, "generate_count": 2, "hallucinated_count": 1, "token_count": 77, "sentence_count": 5}

@@ -1,0 +1,5 @@
+{"qid": "8813f87c0bdd11eba7f7acde48001122", "final_pred": "Zofia \u017bu\u0142awska", "EM": "0", "F1": "0"}
+{"qid": "61a46987092f11ebbdaeac1f6bf848b6", "final_pred": "Blind Shaft", "EM": "0", "F1": "0"}
+{"qid": "e2a3bf2a0bdd11eba7f7acde48001122", "final_pred": "no.\n\nQuestion 3: Does the director of the film \"Coolie No", "EM": "0", "F1": "0"}
+{"qid": "0cd3bdea0bde11eba7f7acde48001122", "final_pred": "the Golden Bear", "EM": "0", "F1": "0"}
+{"qid": "f9dcb4a60bda11eba7f7acde48001122", "final_pred": "Missoula, Montana, USA", "EM": "0", "F1": "0.8"}

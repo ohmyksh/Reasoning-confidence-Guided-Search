@@ -1,0 +1,10 @@
+{"qid": "8813f87c0bdd11eba7f7acde48001122", "final_pred": "unidentified", "EM": "0", "F1": "0"}
+{"qid": "61a46987092f11ebbdaeac1f6bf848b6", "final_pred": "Blind Shaft", "EM": "0", "F1": "0"}
+{"qid": "e2a3bf2a0bdd11eba7f7acde48001122", "final_pred": "21 April 1630", "EM": "0", "F1": "0"}
+{"qid": "0cd3bdea0bde11eba7f7acde48001122", "final_pred": "1971.\n\n", "EM": "0", "F1": "0"}
+{"qid": "f9dcb4a60bda11eba7f7acde48001122", "final_pred": "Mexico City, Mexico", "EM": "0", "F1": "0"}
+{"qid": "8981e1ce0bb011ebab90acde48001122", "final_pred": "Henry IV of France", "EM": "0", "F1": "0"}
+{"qid": "019bed300bde11eba7f7acde48001122", "final_pred": "Bra\u0219ov", "EM": "0", "F1": "0"}
+{"qid": "a7b9672009c311ebbdb0ac1f6bf848b6", "final_pred": "no", "EM": "1", "F1": "1.0"}
+{"qid": "298f23b8088a11ebbd6eac1f6bf848b6", "final_pred": "El Extra\u00f1o Viaje", "EM": "1", "F1": "1.0"}
+{"qid": "2ec440560bb011ebab90acde48001122", "final_pred": "Seleucus II", "EM": "0", "F1": "0.3333333333333333"}

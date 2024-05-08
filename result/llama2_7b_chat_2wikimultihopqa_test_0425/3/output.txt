@@ -1,0 +1,1 @@
+{"qid": "8813f87c0bdd11eba7f7acde48001122", "prediction": "The film Polish-Russian War was directed by Richard Boleslawski. Richard Boleslawski's mother's name is not available. So the answer is unknown.</s>", "retrieve_count": 1, "generate_count": 2, "hallucinated_count": 1, "token_count": 73, "sentence_count": 6}
