@@ -86,11 +86,16 @@ def main():
     for i in tqdm(range(len(data))):
         last_counter = copy(model.counter)
         batch = data[i]
+        # measure total time
+        inference_start_time = time.perf_counter()
         pred = model.inference(batch["question"], batch["demo"], batch["case"])
+        inference_end_time = time.perf_counter()
+        total_time = (inference_end_time - inference_start_time)
         pred = pred.strip()
         ret = {
             "qid": batch["qid"], 
             "prediction": pred,
+            "tot_time": total_time,
         }
         if args.use_counter:
             ret.update(model.counter.calc(last_counter))
