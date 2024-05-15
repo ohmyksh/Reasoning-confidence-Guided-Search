@@ -88,7 +88,7 @@ def main():
 
     metrics = ["EM", "F1", "Precision", "Recall"]
     if "use_counter" not in args or args.use_counter:
-        count_list = ["retrieve_count", "generate_count", "hallucinated_count", "token_count", "sentence_count"]
+        count_list = ["tot_time", "retrieve_count", "retrieve_time", "generate_count", "generate_time", "hallucinated_count", "token_count", "sentence_count"]
         metrics += count_list
     value = [[] for _ in range(len(metrics))]
     with open(os.path.join(args.output_dir, "output.txt"), "r") as fin:

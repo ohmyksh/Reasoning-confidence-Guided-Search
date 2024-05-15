@@ -6,6 +6,9 @@ from math import exp
 from scipy.special import softmax
 from retriever import BM25, SGPT
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
+# to measure time
+import timeit 
+import time
 
 logging.basicConfig(level=logging.INFO) 
 logger = logging.getLogger(__name__)
@@ -43,12 +46,14 @@ class BasicGenerator:
                 return_dict_in_generate = True, 
                 output_scores = True,
             )
+            
             transition_scores = self.model.compute_transition_scores(
                 outputs.sequences, outputs.scores, normalize_logits=True
             )
 
             generated_tokens = outputs.sequences[:, input_length:]
             text = self.tokenizer.decode(generated_tokens[0]) # text = "".join(tokens)
+            # text가 sentence 단위인가?
             tokens = [self.tokenizer.decode(t) for t in generated_tokens[0]]
             logprobs = transition_scores[0]
             logprobs = [p.cpu().numpy() for p in logprobs]
@@ -78,10 +83,12 @@ class BasicGenerator:
             return_dict_in_generate = True, 
             output_scores = True,
         )
+        # print("outputs: ", outputs)
         generated_tokens = outputs.sequences[:, input_length:]
         tokens = self.tokenizer.convert_ids_to_tokens(generated_tokens[0])
         text = self.tokenizer.decode(generated_tokens[0])
-
+        #print("generated tokens: ", generated_tokens)
+        #print("generated tokens[0]: ", generated_tokens[0])
         # merge tokens
         range_ = []
         for i, t in enumerate(tokens):
@@ -157,9 +164,13 @@ class Counter:
         self.hallucinated = 0
         self.token = 0
         self.sentence = 0
+        # modifed for measure execution time
+        self.retrieve_time = 0
+        self.generate_time = 0
 
     def add_generate(self, text, tokenizer):
         self.generate += 1
+        # modified for measure generation time
         ids = tokenizer(text, return_tensors="pt")['input_ids'][0].tolist()
         self.token += len(ids)
         sentences = [sent.text for sent in nlp(text).sents]
@@ -168,7 +179,9 @@ class Counter:
     def calc(self, other_counter):
         return {
             "retrieve_count": self.retrieve - other_counter.retrieve, 
+            "retrieve_time": self.retrieve_time - other_counter.retrieve_time,
             "generate_count": self.generate - other_counter.generate,
+            "generate_time": self.generate_time - other_counter.generate_time,
             "hallucinated_count": self.hallucinated - other_counter.hallucinated, 
             "token_count": self.token - other_counter.token, 
             "sentence_count": self.sentence - other_counter.sentence 
@@ -260,6 +273,7 @@ class SingleRAG(BasicRAG):
         return text
 
 
+# IRCoT
 class FixLengthRAG(BasicRAG):
     def __init__(self, args):
         super().__init__(args)
@@ -269,22 +283,35 @@ class FixLengthRAG(BasicRAG):
         text = ""
         while True:
             old_len = len(text)
+            # modified for measure retrieval time
+            retrieve_start_time = time.perf_counter()
             docs = self.retrieve(question, topk=self.retrieve_topk)
-            # 对 topk 个 passage 生成 prompt
+            retrieve_end_time = time.perf_counter()
+            self.counter.retrieve_time += (retrieve_end_time - retrieve_start_time)
+            # 对 topk 个 passage 生成 prompt = top k에 대한 프롬프트 생성
             prompt = "".join([d["case"]+"\n" for d in demo])
             prompt += "Context:\n"
             for i, doc in enumerate(docs):
                 prompt += f"[{i+1}] {doc}\n"
-            prompt += "Answer in t he same format as before.\n"
+            prompt += "Answer in the same format as before.\n"
             prompt += case + " " + text
             if self.method == "fix-length-retrieval":
+                # modified for measure generation_time
+                generation_start_time = time.perf_counter()
                 new_text, _, _ = self.generator.generate(prompt, self.fix_length)
+                generation_end_time = time.perf_counter()
+                self.counter.generate_time += (generation_end_time - generation_start_time)
                 if self.use_counter == True:
                     self.counter.add_generate(new_text, self.generator.tokenizer)
                 text = text.strip() + " " + new_text.strip()
             else:
                 # fix sentence
+                # modified for measure generation_time
+                generation_start_time = time.perf_counter()
                 new_text, _, _ = self.generator.generate(prompt, self.generate_max_length)
+                generation_end_time = time.perf_counter()
+                self.counter.generate_time += (generation_end_time - generation_start_time)
+                
                 if self.use_counter == True:
                     self.counter.add_generate(new_text, self.generator.tokenizer)
                 new_text = new_text.strip()
@@ -357,7 +384,7 @@ class TokenRAG(BasicRAG):
             old_len = len(text)
             prompt = "".join([d["case"]+"\n" for d in demo])
             prompt += case + " " + text
-            new_text, tokens, logprobs = self.generator.generate(
+            new_text, tokens, logprobs = self.generator.generate( # 여기서 new text가 sentence인가?
                 prompt, 
                 self.generate_max_length, 
                 return_logprobs=True
@@ -369,10 +396,10 @@ class TokenRAG(BasicRAG):
                 text = text.strip() + " " + new_text.strip()
             else:
                 if self.query_formulation == "direct":
-                    retrieve_question = curr.replace("[xxx]", "")
+                    retrieve_question = curr.replace("[xxx]", "") # curr 중에서 [xxx]을 다 제외
                 elif self.query_formulation == "forward_all":
-                    tmp_all = [question, text, ptext]
-                    retrieve_question = " ".join(s for s in tmp_all if len(s) > 0)
+                    tmp_all = [question, text, ptext] # 질문 포함한 이전의 문장 모두 다?
+                    retrieve_question = " ".join(s for s in tmp_all if len(s) > 0) 
                 else:
                     raise NotImplemented
 
@@ -691,22 +718,45 @@ class AttnWeightRAG(BasicRAG):
             prompt += " ".join(s for s in tmp_li if len(s) > 0)
             # print('####', prompt)
             # prompt += case + " " + text
-            new_text, tokens, attns, logprobs, entropies = self.generator.generate_attn(
+            
+            # modified for measure generation_time
+            start_time = time.perf_counter()
+            generation_code = new_text, tokens, attns, logprobs, entropies = self.generator.generate_attn(
                 prompt, 
                 self.generate_max_length, 
                 # self.attention_solver, 
                 use_entropy = self.method == "dragin", 
                 use_logprob = self.method == "attn_prob"
             )
+            end_time = time.perf_counter()
+            self.counter.generate_time += (end_time - start_time)
             weight = entropies if self.method == "dragin" else [-v for v in logprobs]
+            ##### 테스트 주석
 
+            # print("new_text: ", new_text)
+            # print("tokens: ", tokens)
+            # print("attns: ", attns)
+            # print("logprobs: ", logprobs)
+            # print("entropies: ", entropies)
+            
             if self.use_counter == True:
                 self.counter.add_generate(new_text, self.generator.tokenizer)
             hallucination, ptext, curr_tokens, curr_hit =  self.modifier(new_text, tokens, attns, weight)
             
+            # print("hallucination: ", hallucination)
+            # print("ptext: ", ptext)
+            # print("curr_tokens: ", curr_tokens)
+            # print("curr_hit: ", curr_hit)
+            
             if not hallucination:
+                # print("not hallucination")
                 text = text.strip() + " " + new_text.strip()
             else:
+                # print("hallucination")
+                # modified for measure generation_time (include query formulation to retrieve)
+                retrieve_start_time = time.perf_counter()
+                
+                
                 forward_all = [question, text, ptext]
                 forward_all = " ".join(s for s in forward_all if len(s) > 0)
 
@@ -746,7 +796,11 @@ class AttnWeightRAG(BasicRAG):
                 else:
                     raise NotImplemented
 
+                # print("retrieve_query: ", retrieve_question)
+                
                 docs = self.retrieve(retrieve_question, topk=self.retrieve_topk)
+                retrieve_end_time = time.perf_counter()
+                self.counter.retrieve_time += (retrieve_end_time - retrieve_start_time)
                 prompt = "".join([d["case"]+"\n" for d in demo])
                 prompt += "Context:\n"
                 for i, doc in enumerate(docs):
@@ -756,7 +810,12 @@ class AttnWeightRAG(BasicRAG):
                 prompt += " ".join(s for s in tmp_li if len(s) > 0)
                 # print('#####', prompt)
                 # prompt += case + " " + text + " " + ptext.strip()
+                
+                # modified for measure generation_time
+                start_time = time.perf_counter()
                 new_text, _, _ = self.generator.generate(prompt, self.generate_max_length)
+                end_time = time.perf_counter()
+                self.counter.generate_time += (end_time - start_time)
                 if self.use_counter == True:
                     self.counter.add_generate(new_text, self.generator.tokenizer)
                     self.counter.hallucinated += 1

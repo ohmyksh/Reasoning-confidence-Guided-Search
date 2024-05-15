@@ -7,12 +7,12 @@ import logging
 from data import StrategyQA, WikiMultiHopQA, HotpotQA, IIRC
 from generate import *
 
-logging.basicConfig(level=logging.INFO) 
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO) # 기본 로그 설정 구성
+logger = logging.getLogger(__name__) # 지정된 이름으로 로그 객체 만듬
 
 
-def get_args():
-    parser = argparse.ArgumentParser()
+def get_args(): # 
+    parser = argparse.ArgumentParser() # 명령행 인자를 파싱하기 위한 ArgumentParser 객체를 생성
     parser.add_argument("-c", "--config_path", type=str, required=True)
     args = parser.parse_args()
     config_path = args.config_path
@@ -86,11 +86,16 @@ def main():
     for i in tqdm(range(len(data))):
         last_counter = copy(model.counter)
         batch = data[i]
+        # measure total time
+        inference_start_time = time.perf_counter()
         pred = model.inference(batch["question"], batch["demo"], batch["case"])
+        inference_end_time = time.perf_counter()
+        total_time = (inference_end_time - inference_start_time)
         pred = pred.strip()
         ret = {
             "qid": batch["qid"], 
             "prediction": pred,
+            "tot_time": total_time,
         }
         if args.use_counter:
             ret.update(model.counter.calc(last_counter))
