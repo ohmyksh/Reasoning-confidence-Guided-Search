@@ -2,13 +2,20 @@ import numpy as np
 import logging
 import spacy
 import torch
+import transformers
 from math import exp
 from scipy.special import softmax
 from retriever import BM25, SGPT
-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, LlamaForCausalLM
 # to measure time
 import timeit 
 import time
+# to load llama3
+from typing import List
+from transformers import pipeline
+# to make output file
+import os
+
 
 logging.basicConfig(level=logging.INFO) 
 logger = logging.getLogger(__name__)
@@ -71,13 +78,18 @@ class BasicGenerator:
             return text, None, None
     
     def generate_attn(self, input_text, max_length, solver="max", use_entropy = False, use_logprob = False):
-        input_ids = self.tokenizer.encode(input_text, return_tensors="pt")
-        input_ids = input_ids.to(self.model.device)
+        # self.generator.generate_attn(
+        # prompt, self.generate_max_length, use_entropy = self.method == "dragin", use_logprob = self.method == "attn_prob")
+        input_ids = self.tokenizer.encode(input_text, return_tensors="pt") # prompt encode
+        input_ids = input_ids.to(self.model.device) 
         input_length = input_ids.shape[1]
         attention_mask = torch.ones_like(input_ids)
-
+        
+        # reproductibility
+        transformers.random.set_seed(0)
+        
         outputs = self.model.generate(
-            input_ids = input_ids, 
+            input_ids = input_ids, # prompt
             attention_mask = attention_mask,
             max_new_tokens = max_length, 
             return_dict_in_generate = True, 
@@ -87,8 +99,9 @@ class BasicGenerator:
         generated_tokens = outputs.sequences[:, input_length:]
         tokens = self.tokenizer.convert_ids_to_tokens(generated_tokens[0])
         text = self.tokenizer.decode(generated_tokens[0])
-        #print("generated tokens: ", generated_tokens)
-        #print("generated tokens[0]: ", generated_tokens[0])
+        # print("generate_attn function) generated tokens: ", generated_tokens)
+        # print("generate_attn function) new_text = generated tokens[0]: ", generated_tokens[0])
+        
         # merge tokens
         range_ = []
         for i, t in enumerate(tokens):
@@ -167,6 +180,7 @@ class Counter:
         # modifed for measure execution time
         self.retrieve_time = 0
         self.generate_time = 0
+        self.query_time = 0
 
     def add_generate(self, text, tokenizer):
         self.generate += 1
@@ -182,6 +196,7 @@ class Counter:
             "retrieve_time": self.retrieve_time - other_counter.retrieve_time,
             "generate_count": self.generate - other_counter.generate,
             "generate_time": self.generate_time - other_counter.generate_time,
+            "query_time": self.query_time - other_counter.query_time,
             "hallucinated_count": self.hallucinated - other_counter.hallucinated, 
             "token_count": self.token - other_counter.token, 
             "sentence_count": self.sentence - other_counter.sentence 
@@ -509,39 +524,40 @@ class AttnWeightRAG(BasicRAG):
     
     def modifier(self, text, tokens, attentions, weight):
         sentences = [sent.text.strip() for sent in nlp(text).sents]
-        sentences = [sent for sent in sentences if len(sent) > 0]
+        sentences = [sent for sent in sentences if len(sent) > 0] # 문장 분할
         tid = 0
-        for sid, sent in enumerate(sentences):
-            tl, tr = tid, tid
+        for sid, sent in enumerate(sentences): 
+            tl, tr = tid, tid 
             if sid == len(sentences) - 1:
-                tl, tr = tid, len(tokens)
-            else:
+                tl, tr = tid, len(tokens) # 문장의 시작과 끝 위치 
+            else: 
                 for i in range(tid + 1, len(tokens)):
                     seq = " ".join(tokens[tl:i])
-                    if sent in seq:
+                    if sent in seq: # 문장이 속한 구간 찾으면 tr 업데이트
                         tr = i
                         break
                 tid = tr
             # value = attenion * (-log prob)
             attns = attentions[tl:tr]
-            attns = np.array(attns) / sum(attns)
+            attns = np.array(attns) / sum(attns) # normalization
             value = [attns[i-tl] * weight[i] * (tr-tl) for i in range(tl, tr)] 
-            thres = [1 if v > self.hallucination_threshold else 0 for v in value]
-            if 1 in thres:
+            thres = [1 if v > self.hallucination_threshold else 0 for v in value] # hallucination 판단
+            if 1 in thres: # 특정 문장의 토큰 중 하나라도 hallucination인 경우
                 # hallucinated
                 if "check_real_words" in self.__dict__ and self.check_real_words:
-                    doc = nlp(sent)
+                    doc = nlp(sent) # 문장으로 객체화
                     real_words = set(token.text for token in doc if token.pos_ in 
                         ['NOUN', 'ADJ', 'VERB', 'PROPN', 'NUM'])
-                    def match(tok):
+                    def match(tok): # 실제 단어인지 확인하는 함수
                         for word in real_words:
                             if word in tok:
                                 return True
                         return False
-                    for i in range(len(thres)):
+                    for i in range(len(thres)): # 각 토큰이 실제 단어인지 확인
                         if not match(tokens[tl+i]):
-                            thres[i] = 0                
+                            thres[i] = 0 # 실제 단어가 아니라면 hallucination 취소함               
                 
+                # 문장이 첫번째 문장이면 "", 아니면 이전 문장들 모두 하나의 문자열로 합친다
                 prev = "" if sid == 0 else " ".join(sentences[:sid-1])
                 # curr = " ".join(
                 #     [tokens[i] if thres[i] == 0 else "[xxx]" for i in range(len(thres))]
@@ -633,13 +649,17 @@ class AttnWeightRAG(BasicRAG):
     #     else:
     #         return final_text
 
-    def keep_real_words(self, prev_text, curr_tokens, curr_hit):
+    def keep_real_words(self, prev_text, new_text, curr_tokens, curr_hit):
         curr_text = " ".join(curr_tokens)
-        all_text = prev_text + " " + curr_text
+        # modified for consider text after hallucination
+        # question_start = new_text.find("Question:")
+        # # "Question:" 문자열이 텍스트에 존재하면 해당 부분 이후를 잘라냄
+        # if question_start != -1:
+        #     new_text = new_text[:question_start].strip()
+        all_text = prev_text + " " + curr_text + " " + new_text
         input_ids = self.generator.tokenizer.encode(all_text, return_tensors="pt")
         input_length = input_ids.shape[1]
         tokens_tmp = self.generator.tokenizer.convert_ids_to_tokens(input_ids[0])
-
         atten_tmp = self.generator.model(input_ids, output_attentions=True).attentions[-1][0]
 
         # merge tokens
@@ -673,7 +693,7 @@ class AttnWeightRAG(BasicRAG):
         forward_attns = torch.zeros(tr - tl)
         hit_cnt = 0
         for i in range(len(curr_hit)):
-            if curr_hit[i] == 1:
+            if curr_hit[i] == 1: # Hallucinated token
                 forward_attns += attns[curr_st + i]
                 hit_cnt += 1
         forward_attns /= hit_cnt
@@ -696,30 +716,93 @@ class AttnWeightRAG(BasicRAG):
             if match(tok):
                 real_pairs.append((att, tok, i))
         
-        if "retrieve_keep_top_k" in self.__dict__:
+        if "retrieve_keep_top_k" in self.__dict__: # top k
             top_k = min(self.retrieve_keep_top_k, len(real_pairs))
-        elif "retrieve_keep_ratio" in self.__dict__:
+        elif "retrieve_keep_ratio" in self.__dict__: # 전체 중 일부 비율
             top_k = int(len(real_pairs) * self.retrieve_keep_ratio)
         
         real_pairs = sorted(real_pairs, key = lambda x:x[0])
-        real_pairs = real_pairs[:top_k]
+        real_pairs = real_pairs[:top_k] # 상위 특정 개수
         real_pairs = sorted(real_pairs, key = lambda x:x[2])
-        return " ".join([x[1] for x in real_pairs])
+        return " ".join([x[1] for x in real_pairs]) # token 들로 문자열 구성
+
+    def generate_query_with_lm(self, question, prev_text, curr_tokens, curr_hit):
+        # hallucinated_tokens = [token for token, hit in zip(curr_tokens, curr_hit) if hit == 1]
+        hallucinated_spans = []
+        span = []
+        
+        # curr_tokens 중에서 hallucinate된 토큰이 연속적으로 있으면 span으로 처리
+        for token, hit in zip(curr_tokens, curr_hit):
+            if hit == 1:
+                span.append(token)
+            else:
+                if span:
+                    hallucinated_spans.append(" ".join(span))
+                    span = []
+        if span:
+            hallucinated_spans.append(" ".join(span))
+            
+        if not hallucinated_spans:
+            return ""  
+        
+        # hallucinated_part = ', '.join(f'"{span}"' for span in hallucinated_spans)
+        # generated_text = prev_text  + " ".join(curr_tokens)  # curr_tokens를 문자열로 결합
+        curr_text = " ".join(curr_tokens)
+        prompt_parts = []
+        prompt_parts.append(f'{prev_text} {curr_text}\n Read the above passage and generate questions.')
+        for token in hallucinated_spans:
+            prompt_part = f'Generate a question to which the answer is the term/entity/phrase "{token}".'
+            prompt_parts.append(prompt_part)
+        prompt = "\n".join(prompt_parts)
+        #print("prompt: ", prompt)
+        
+        # model = LlamaForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+        # tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+        # inputs = tokenizer(prompt, return_tensors="pt")
+        # Generate
+        # generate_ids = model.generate(inputs.input_ids, max_length=100)
+        # queries = tokenizer.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        
+        num_return_sequences = len(hallucinated_spans) if len(hallucinated_spans) > 0 else 1
+
+        # Meta-Llama-3-8B 
+        model_id = "meta-llama/Meta-Llama-3-8B"
+        llama_model = pipeline("text-generation", model=model_id)
+        queries = llama_model(prompt, 
+                            num_return_sequences=num_return_sequences,
+                            max_length=256)
+        # print("queries: ", queries)
+        
+        cleaned_queries = []
+        for query in queries:
+            generated_text = query.get("generated_text", "") 
+            query_without_prompt = generated_text.split(prompt, 1)[-1].strip()
+            cleaned_queries.append(query_without_prompt) 
+        # Combine the queries into a single string
+        combined_queries = " ".join(cleaned_queries)
+        return combined_queries
 
     def inference(self, question, demo, case):
         # assert self.query_formulation == "direct"
         # print(question)
         # print("#" * 20)
         text = ""
+        i = 0
+        
+        # Define the directory and file name for the log file
+        query_log_file = open("/home/shkim/DRAGIN/result/errorcase/real_words_all/103/103_query_log.txt", "a")
         while True:
+            #print("step: ", i)
+            
             old_len = len(text)
             prompt = "".join([d["case"]+"\n" for d in demo])
             tmp_li = [case, text]
             prompt += " ".join(s for s in tmp_li if len(s) > 0)
-            # print('####', prompt)
+            # ('####', prompt)
             # prompt += case + " " + text
             
             # modified for measure generation_time
+            query_log_file.write("============ LLM generated output ============\n")
             start_time = time.perf_counter()
             generation_code = new_text, tokens, attns, logprobs, entropies = self.generator.generate_attn(
                 prompt, 
@@ -731,35 +814,36 @@ class AttnWeightRAG(BasicRAG):
             end_time = time.perf_counter()
             self.counter.generate_time += (end_time - start_time)
             weight = entropies if self.method == "dragin" else [-v for v in logprobs]
-            ##### 테스트 주석
-
-            # print("new_text: ", new_text)
-            # print("tokens: ", tokens)
+            query_log_file.write(f"LLM 생성 결과: {new_text}\n")
+            # query_log_file.write(f"토큰: {tokens}\n")
+            # print("new_text) ", new_text)
+            # print("tokens) ", tokens)
             # print("attns: ", attns)
             # print("logprobs: ", logprobs)
             # print("entropies: ", entropies)
             
             if self.use_counter == True:
                 self.counter.add_generate(new_text, self.generator.tokenizer)
+            query_log_file.write("============ Decide Hallucination ============\n")
             hallucination, ptext, curr_tokens, curr_hit =  self.modifier(new_text, tokens, attns, weight)
             
-            # print("hallucination: ", hallucination)
-            # print("ptext: ", ptext)
-            # print("curr_tokens: ", curr_tokens)
-            # print("curr_hit: ", curr_hit)
+            query_log_file.write(f"hallucination 여부: {hallucination}\n")
+            query_log_file.write(f"ptext: {ptext}\n")
+            query_log_file.write(f"hallucinated sentence: {curr_tokens}\n")
+            query_log_file.write(f"hallucinated tokens: {curr_hit}\n")
             
             if not hallucination:
-                # print("not hallucination")
+                #print("not hallucination")
+                query_log_file.write("============ Not Hallucination ============\n")
                 text = text.strip() + " " + new_text.strip()
             else:
-                # print("hallucination")
+                query_log_file.write("============= Hallucination ============\n")
                 # modified for measure generation_time (include query formulation to retrieve)
-                retrieve_start_time = time.perf_counter()
                 
-                
-                forward_all = [question, text, ptext]
-                forward_all = " ".join(s for s in forward_all if len(s) > 0)
+                forward_all = [question, text, ptext] # 질의 + for문 이전 스텝에서 생성했던 것 + 이번 스텝에서 hallucination 이전까지 생성된 것
+                forward_all = " ".join(s for s in forward_all if len(s) > 0) # 하나의 string으로 만든다
 
+                # 텍스트의 마지막 num 개의 토큰 리턴
                 def fetch_last_n_tokens(text, num, tokenizer = self.generator.tokenizer):
                     tokens = tokenizer.tokenize(text)
                     if num >= len(tokens):
@@ -767,36 +851,61 @@ class AttnWeightRAG(BasicRAG):
                     last_n_tokens = tokens[-num:]
                     last_n_sentence = ' '.join(last_n_tokens)
                     return last_n_sentence
+                
+                
+                query_start_time = time.perf_counter()
+                if self.query_formulation == "current": # hallucination 일어난 문장
+                    retrieve_question = " ".join(curr_tokens) 
 
-                if self.query_formulation == "current":
-                    retrieve_question = " ".join(curr_tokens)
-
-                elif self.query_formulation == "current_wo_wrong":
+                elif self.query_formulation == "current_wo_wrong": # hallucination 일어난 문장에서 해당 토큰 제거
                     retrieve_question = " ".join(
                         list(curr_tokens[i] if curr_hit[i] == 0 else "" for i in range(len(curr_tokens)))
                     )
 
-                elif self.query_formulation == "forward_all":
+                elif self.query_formulation == "forward_all": # 질의 + 이전의 모든 생성 결과
                     retrieve_question = forward_all
                 
-                elif self.query_formulation == "last_sentence":
+                elif self.query_formulation == "last_sentence": # 이전 생성 결과에서의 직전 문장
                     retrieve_question = self.get_last_sentence(forward_all)
                 
-                elif self.query_formulation == "last_n_tokens":
+                elif self.query_formulation == "last_n_tokens": # 이전 생성 결과에서의 마지막 n개 토큰
                     assert "retrieve_keep_top_k" in self.__dict__
                     retrieve_question = fetch_last_n_tokens(
                         forward_all, self.retrieve_keep_top_k)
                 
-                elif self.query_formulation == "real_words": 
+                elif self.query_formulation == "real_words": # Original Dragin 
                     retrieve_question = self.keep_real_words(
                         prev_text = question + " " + text + " " + ptext, 
+                        # modified for consider tokens after hallucination
+                        new_text = '',
                         curr_tokens = curr_tokens, 
                         curr_hit = curr_hit,
                     ) 
+                elif self.query_formulation == "real_words_all": # Modified Dragin (all context)
+                    retrieve_question = self.keep_real_words(
+                        prev_text = question + " " + text + " " + ptext, 
+                        # modified for consider tokens after hallucination
+                        new_text = new_text, # after hallucination
+                        curr_tokens = curr_tokens, 
+                        curr_hit = curr_hit,
+                    )  
+                elif self.query_formulation == "generated_question": # Query generated by LLM
+                    retrieve_question = self.generate_query_with_lm(
+                        question = question,
+                        prev_text = question + " " + text + " " + ptext, 
+                        curr_tokens = curr_tokens, 
+                        curr_hit = curr_hit,
+                    )
                 else:
                     raise NotImplemented
-
-                # print("retrieve_query: ", retrieve_question)
+                query_end_time = time.perf_counter()
+                self.counter.query_time += (query_end_time - query_start_time)
+                
+                query_log_file.write("============ Query Formulation ============\n")
+                query_log_file.write(f"query_formulation_time: {query_end_time - query_start_time}\n")
+                query_log_file.write(f"retrieve_query: {retrieve_question}\n")
+                
+                retrieve_start_time = time.perf_counter()
                 
                 docs = self.retrieve(retrieve_question, topk=self.retrieve_topk)
                 retrieve_end_time = time.perf_counter()
@@ -816,10 +925,15 @@ class AttnWeightRAG(BasicRAG):
                 new_text, _, _ = self.generator.generate(prompt, self.generate_max_length)
                 end_time = time.perf_counter()
                 self.counter.generate_time += (end_time - start_time)
+                
                 if self.use_counter == True:
                     self.counter.add_generate(new_text, self.generator.tokenizer)
                     self.counter.hallucinated += 1
                 new_text = self.get_top_sentence(new_text)
+                
+                #print("after retrieve_new text) ", new_text)
+                query_log_file.write("============ After Retrieval ============\n")
+                query_log_file.write(f"검색 후 LLM 생성 결과: {new_text}\n")
                 tmp_li = [text.strip(), ptext.strip(), new_text.strip()]
                 text = " ".join(s for s in tmp_li if len(s) > 0)
                 # text = text.strip() + " " + ptext.strip() + " " + new_text.strip()
@@ -831,10 +945,12 @@ class AttnWeightRAG(BasicRAG):
                 #     context += f"[{i+1}] {doc}\n" 
                 # print(context)
                 # print(text)
+                i += 1
             
             # 判断 token 的个数要少于 generate_max_length 
             tokens_count = len(self.generator.tokenizer.encode(text))
             if tokens_count > self.generate_max_length or len(text) <= old_len or "the answer is" in text:
                 break
-        # print("#" * 20)
+        query_log_file.write("============ Finish Inference ============\n")
+        query_log_file.close()
         return text

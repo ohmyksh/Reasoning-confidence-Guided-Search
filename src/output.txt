@@ -1,0 +1,43 @@
+#### Question: When did the director of film Hypocrite (Film) die?
+Answer: The film Hypocrite was directed by Miguel Morayta. Miguel Morayta died on 19 June 2013. So the answer is 19 June 2013.
+Question: Are both Kurram Garhi and Trojkrsti located in the same country?
+Answer: Kurram Garhi is located in the country of Pakistan. Trojkrsti is located in the country of Republic of Macedonia. Thus, they are not in the same country. So the answer is no.
+Question: Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?
+Answer: Coolie No. 1 (1995 film) was directed by David Dhawan. The Sensational Trial was directed by Karl Freund. David Dhawan's nationality is India. Karl Freund's nationality is Germany. Thus, they do not have the same nationality. So the answer is no.
+Question: Who is Boraqchin (Wife Of Ögedei)'s father-in-law?
+Answer: Boraqchin is married to Ögedei Khan. Ögedei Khan's father is Genghis Khan. Thus, Boraqchin's father-in-law is Genghis Khan. So the answer is Genghis Khan.
+Question: Who was born first out of Martin Hodge and Ivania Martinich?
+Answer: Martin Hodge was born on 4 February 1959. Ivania Martinich was born on 25 July 1995. Thus, Martin Hodge was born first. So the answer is Martin Hodge.
+Question: When did the director of film Laughter In Hell die?
+Answer: The film Laughter In Hell was directed by Edward L. Cahn. Edward L. Cahn died on August 25, 1963. So the answer is August 25, 1963.
+Question: Who is the mother of the director of film Polish-Russian War (Film)?
+Answer:
+generate_attn function) generated tokens:  tensor([[  450,  2706, 19919, 29899, 23002,   713,  3362,   471, 10624,   491,
+           399,  8650,   952,  8479,  4971,   542,  1537, 10587, 29889,   399,
+          8650,   952,  8479,  4971,   542,  1537, 10587, 29915, 29879,  5637,
+           338,  9815, 29889,  6549, 29892,   278,  1234,   338,  9815, 29889,
+            13, 16492, 29901, 11644,   338,   278,  6532,   310,   278,  8881,
+           310,  2706,   450,   390,  2742, 25154, 29973,    13, 22550, 29901,
+           450,  2706,   450,   390]], device='cuda:0')
+generate_attn function) new_text = generated tokens[0]:  tensor([  450,  2706, 19919, 29899, 23002,   713,  3362,   471, 10624,   491,
+          399,  8650,   952,  8479,  4971,   542,  1537, 10587, 29889,   399,
+         8650,   952,  8479,  4971,   542,  1537, 10587, 29915, 29879,  5637,
+          338,  9815, 29889,  6549, 29892,   278,  1234,   338,  9815, 29889,
+           13, 16492, 29901, 11644,   338,   278,  6532,   310,   278,  8881,
+          310,  2706,   450,   390,  2742, 25154, 29973,    13, 22550, 29901,
+          450,  2706,   450,   390], device='cuda:0')
+new_text)  The film Polish-Russian War was directed by Władysław Skoczyński. Władysław Skoczyński's mother is unknown. Thus, the answer is unknown.
+Question: Who is the wife of the director of film The Redeemer?
+Answer: The film The R
+tokens)  ['The', 'film', 'Polish-Russian', 'War', 'was', 'directed', 'by', 'Władysław', 'Skoczyński.', 'Władysław', "Skoczyński's", 'mother', 'is', 'unknown.', 'Thus,', 'the', 'answer', 'is', 'unknown.', '<0x0A>Question:', 'Who', 'is', 'the', 'wife', 'of', 'the', 'director', 'of', 'film', 'The', 'Redeemer?', '<0x0A>Answer:', 'The', 'film', 'The', 'R']
+attns:  [0.0359962098300457, 0.07122200727462769, 0.2927186191082001, 0.12892426550388336, 0.030904270708560944, 0.03835389390587807, 0.04652499407529831, 0.329572468996048, 0.5104549527168274, 0.38958054780960083, 0.7267720699310303, 0.11317979544401169, 0.07761964946985245, 0.1709585040807724, 0.20987549424171448, 0.06228000670671463, 0.10238063335418701, 0.08863262832164764, 0.19794824719429016, 0.3753002882003784, 0.17278262972831726, 0.08912254869937897, 0.05652802810072899, 0.13795998692512512, 0.11645956337451935, 0.06856424361467361, 0.15640640258789062, 0.10839302837848663, 0.1607673168182373, 0.09181023389101028, 0.7544323205947876, 0.5827670097351074, 0.13442888855934143, 0.26229748129844666, 0.19479107856750488, 0.40318822860717773]
+logprobs:  None
+entropies:  [0.0, 0.3716389834880829, 0.0, 0.0, 0.0, 0.0, 0.0, 0.585843026638031, 0.3838467955589294, 0.0, 0.0, 0.0, 0.6841905117034912, 0.4469507336616516, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1061699390411377, 0.0, 0.0, 1.6779096126556396, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.2861045002937317, 0.0, 0.0, 0.0, 0.0, 0.0]
+hallucination)  True
+ptext)  The film Polish-Russian War was directed by Władysław Skoczyński. Władysław Skoczyński's mother is unknown.
+curr_tokens)  ['<0x0A>Question:', 'Who', 'is', 'the', 'wife', 'of', 'the', 'director', 'of', 'film']
+curr_hit)  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+one example
+question:  Who is the mother of the director of film Polish-Russian War (Film)? demo:  [{'case': 'Question: When did the director of film Hypocrite (Film) die?\nAnswer: The film Hypocrite was directed by Miguel Morayta. Miguel Morayta died on 19 June 2013. So the answer is 19 June 2013.', 'ctxs': [], 'question': 'When did the director of film Hypocrite (Film) die?'}, {'case': 'Question: Are both Kurram Garhi and Trojkrsti located in the same country?\nAnswer: Kurram Garhi is located in the country of Pakistan. Trojkrsti is located in the country of Republic of Macedonia. Thus, they are not in the same country. So the answer is no.', 'ctxs': [], 'question': 'Are both Kurram Garhi and Trojkrsti located in the same country?'}, {'case': "Question: Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?\nAnswer: Coolie No. 1 (1995 film) was directed by David Dhawan. The Sensational Trial was directed by Karl Freund. David Dhawan's nationality is India. Karl Freund's nationality is Germany. Thus, they do not have the same nationality. So the answer is no.", 'ctxs': [], 'question': 'Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?'}, {'case': "Question: Who is Boraqchin (Wife Of Ögedei)'s father-in-law?\nAnswer: Boraqchin is married to Ögedei Khan. Ögedei Khan's father is Genghis Khan. Thus, Boraqchin's father-in-law is Genghis Khan. So the answer is Genghis Khan.", 'ctxs': [], 'question': "Who is Boraqchin (Wife Of Ögedei)'s father-in-law?"}, {'case': 'Question: Who was born first out of Martin Hodge and Ivania Martinich?\nAnswer: Martin Hodge was born on 4 February 1959. Ivania Martinich was born on 25 July 1995. Thus, Martin Hodge was born first. So the answer is Martin Hodge.', 'ctxs': [], 'question': 'Who was born first out of Martin Hodge and Ivania Martinich?'}, {'case': 'Question: When did the director of film Laughter In Hell die?\nAnswer: The film Laughter In Hell was directed by Edward L. Cahn. Edward L. Cahn died on August 25, 1963. So the answer is August 25, 1963.', 'ctxs': [], 'question': 'When did the director of film Laughter In Hell die?'}] case:  Question: Who is the mother of the director of film Polish-Russian War (Film)?
+Answer:
+prediction:  The film Polish-Russian War was directed by Władysław Skoczyński. Władysław Skoczyński's mother is unknown. So the answer is unknown.</s>

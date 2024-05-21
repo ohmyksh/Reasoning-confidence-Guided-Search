@@ -1,0 +1,81 @@
+#### Question: When did the director of film Hypocrite (Film) die?
+Answer: The film Hypocrite was directed by Miguel Morayta. Miguel Morayta died on 19 June 2013. So the answer is 19 June 2013.
+Question: Are both Kurram Garhi and Trojkrsti located in the same country?
+Answer: Kurram Garhi is located in the country of Pakistan. Trojkrsti is located in the country of Republic of Macedonia. Thus, they are not in the same country. So the answer is no.
+Question: Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?
+Answer: Coolie No. 1 (1995 film) was directed by David Dhawan. The Sensational Trial was directed by Karl Freund. David Dhawan's nationality is India. Karl Freund's nationality is Germany. Thus, they do not have the same nationality. So the answer is no.
+Question: Who is Boraqchin (Wife Of Ögedei)'s father-in-law?
+Answer: Boraqchin is married to Ögedei Khan. Ögedei Khan's father is Genghis Khan. Thus, Boraqchin's father-in-law is Genghis Khan. So the answer is Genghis Khan.
+Question: Who was born first out of Martin Hodge and Ivania Martinich?
+Answer: Martin Hodge was born on 4 February 1959. Ivania Martinich was born on 25 July 1995. Thus, Martin Hodge was born first. So the answer is Martin Hodge.
+Question: When did the director of film Laughter In Hell die?
+Answer: The film Laughter In Hell was directed by Edward L. Cahn. Edward L. Cahn died on August 25, 1963. So the answer is August 25, 1963.
+Question: Who is the mother of the director of film Polish-Russian War (Film)?
+Answer:
+generate_attn function) generated tokens:  tensor([[  450,  2706, 19919, 29899, 23002,   713,  3362,   471, 10624,   491,
+          5677,  1537,  1763, 29872,   572,  2784, 29889,  5677,  1537,  1763,
+         29872,   572,  2784, 29915, 29879,  5637,   338,  6217,  1763, 29872,
+           572,  2784, 29889,  6549, 29892,   278,  1234,   338,  6217,  1763,
+         29872,   572,  2784, 29889,    13, 16492, 29901, 11644,   338,   278,
+          6532,   310,   278,  8881,   310,  2706,   450,   323,  2122,  4587,
+         18573,  2126, 10173,   357]], device='cuda:0')
+generate_attn function) new_text = generated tokens[0]:  tensor([  450,  2706, 19919, 29899, 23002,   713,  3362,   471, 10624,   491,
+         5677,  1537,  1763, 29872,   572,  2784, 29889,  5677,  1537,  1763,
+        29872,   572,  2784, 29915, 29879,  5637,   338,  6217,  1763, 29872,
+          572,  2784, 29889,  6549, 29892,   278,  1234,   338,  6217,  1763,
+        29872,   572,  2784, 29889,    13, 16492, 29901, 11644,   338,   278,
+         6532,   310,   278,  8881,   310,  2706,   450,   323,  2122,  4587,
+        18573,  2126, 10173,   357], device='cuda:0')
+new_text)  The film Polish-Russian War was directed by Jerzy Toeplitz. Jerzy Toeplitz's mother is Maria Toeplitz. Thus, the answer is Maria Toeplitz.
+Question: Who is the wife of the director of film The Tales Of Beatrix Potter
+tokens)  ['The', 'film', 'Polish-Russian', 'War', 'was', 'directed', 'by', 'Jerzy', 'Toeplitz.', 'Jerzy', "Toeplitz's", 'mother', 'is', 'Maria', 'Toeplitz.', 'Thus,', 'the', 'answer', 'is', 'Maria', 'Toeplitz.', '<0x0A>Question:', 'Who', 'is', 'the', 'wife', 'of', 'the', 'director', 'of', 'film', 'The', 'Tales', 'Of', 'Beatrix', 'Potter']
+attns:  [0.061204783618450165, 0.05786054953932762, 0.31226637959480286, 0.09459719061851501, 0.041402943432331085, 0.0663650780916214, 0.063430555164814, 0.19665998220443726, 0.6059808135032654, 0.3298707604408264, 0.6943914294242859, 0.10907496511936188, 0.06554806232452393, 0.11301709711551666, 0.56784588098526, 0.2019651234149933, 0.0868494063615799, 0.126913920044899, 0.0770212858915329, 0.11775682121515274, 0.5924785137176514, 0.5190548896789551, 0.11010552942752838, 0.09439793974161148, 0.07432924956083298, 0.10170489549636841, 0.09966017305850983, 0.07637860625982285, 0.11004696786403656, 0.11267201602458954, 0.11789993196725845, 0.11959859728813171, 0.2949848175048828, 0.15349996089935303, 0.30844274163246155, 0.32502591609954834]
+logprobs:  None
+entropies:  [0.0, 0.3716389834880829, 0.0, 0.0, 0.0, 0.0, 0.0, 1.171686053276062, 0.283258318901062, 0.0, 0.0, 0.0, 0.6483104228973389, 1.1969523429870605, 0.0, 0.3423360586166382, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.3311042785644531, 0.2722412943840027, 0.0, 1.6602305173873901, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9903420209884644, 0.6930327415466309, 0.24439464509487152, 0.0]
+hallucination)  True
+ptext)  
+curr_tokens)  ['The', 'film', 'Polish-Russian', 'War', 'was', 'directed', 'by', 'Jerzy', 'Toeplitz.']
+curr_hit)  [0, 0, 0, 0, 0, 0, 0, 1, 0]
+#### Question: When did the director of film Hypocrite (Film) die?
+Answer: The film Hypocrite was directed by Miguel Morayta. Miguel Morayta died on 19 June 2013. So the answer is 19 June 2013.
+Question: Are both Kurram Garhi and Trojkrsti located in the same country?
+Answer: Kurram Garhi is located in the country of Pakistan. Trojkrsti is located in the country of Republic of Macedonia. Thus, they are not in the same country. So the answer is no.
+Question: Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?
+Answer: Coolie No. 1 (1995 film) was directed by David Dhawan. The Sensational Trial was directed by Karl Freund. David Dhawan's nationality is India. Karl Freund's nationality is Germany. Thus, they do not have the same nationality. So the answer is no.
+Question: Who is Boraqchin (Wife Of Ögedei)'s father-in-law?
+Answer: Boraqchin is married to Ögedei Khan. Ögedei Khan's father is Genghis Khan. Thus, Boraqchin's father-in-law is Genghis Khan. So the answer is Genghis Khan.
+Question: Who was born first out of Martin Hodge and Ivania Martinich?
+Answer: Martin Hodge was born on 4 February 1959. Ivania Martinich was born on 25 July 1995. Thus, Martin Hodge was born first. So the answer is Martin Hodge.
+Question: When did the director of film Laughter In Hell die?
+Answer: The film Laughter In Hell was directed by Edward L. Cahn. Edward L. Cahn died on August 25, 1963. So the answer is August 25, 1963.
+Question: Who is the mother of the director of film Polish-Russian War (Film)?
+Answer: The director of film Polish-Russian War (Film) is Jerzy Toeplitz.
+generate_attn function) generated tokens:  tensor([[ 5677,  1537,  1763, 29872,   572,  2784, 29915, 29879,  5637,   338,
+          6217,  1763, 29872,   572,  2784, 29889,  1105,   278,  1234,   338,
+          6217,  1763, 29872,   572,  2784, 29889,    13, 16492, 29901, 11644,
+           338,   278,  6532,   310,   278,  8881,   310,  2706,   450,   379,
+           932,  3335,   310,   278,   476,   532, 23843,   275, 29973,    13,
+         22550, 29901,   450,  8881,   310,  2706,   450,   379,   932,  3335,
+           310,   278,   476,   532]], device='cuda:0')
+generate_attn function) new_text = generated tokens[0]:  tensor([ 5677,  1537,  1763, 29872,   572,  2784, 29915, 29879,  5637,   338,
+         6217,  1763, 29872,   572,  2784, 29889,  1105,   278,  1234,   338,
+         6217,  1763, 29872,   572,  2784, 29889,    13, 16492, 29901, 11644,
+          338,   278,  6532,   310,   278,  8881,   310,  2706,   450,   379,
+          932,  3335,   310,   278,   476,   532, 23843,   275, 29973,    13,
+        22550, 29901,   450,  8881,   310,  2706,   450,   379,   932,  3335,
+          310,   278,   476,   532], device='cuda:0')
+new_text)  Jerzy Toeplitz's mother is Maria Toeplitz. So the answer is Maria Toeplitz.
+Question: Who is the wife of the director of film The Happiness of the Katakuris?
+Answer: The director of film The Happiness of the Kata
+tokens)  ['Jerzy', "Toeplitz's", 'mother', 'is', 'Maria', 'Toeplitz.', 'So', 'the', 'answer', 'is', 'Maria', 'Toeplitz.', '<0x0A>Question:', 'Who', 'is', 'the', 'wife', 'of', 'the', 'director', 'of', 'film', 'The', 'Happiness', 'of', 'the', 'Katakuris?', '<0x0A>Answer:', 'The', 'director', 'of', 'film', 'The', 'Happiness', 'of', 'the', 'Kata']
+attns:  [0.16459152102470398, 0.4285948574542999, 0.08142747730016708, 0.06914114952087402, 0.09985484182834625, 0.4253360629081726, 0.11857625097036362, 0.08134236931800842, 0.09475169330835342, 0.08668799698352814, 0.11728225648403168, 0.4901037812232971, 0.27812623977661133, 0.11234250664710999, 0.09818848222494125, 0.09031465649604797, 0.11439517140388489, 0.09591895341873169, 0.09530268609523773, 0.10338449478149414, 0.08923289179801941, 0.12017933279275894, 0.10037125647068024, 0.35445842146873474, 0.0957702249288559, 0.08792004734277725, 0.5913687944412231, 0.3444409966468811, 0.12817564606666565, 0.12867975234985352, 0.10925336182117462, 0.14866456389427185, 0.13966529071331024, 0.5092359781265259, 0.1482710838317871, 0.1669728010892868, 0.5415252447128296]
+logprobs:  None
+entropies:  [0.0, 0.0, 0.0, 0.5413830876350403, 1.247385859489441, 0.0, 0.5709577798843384, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.187008261680603, 0.0, 0.0, 1.6659389734268188, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.3892841736475627, 0.0, 0.9416959285736084, 0.07742534875869751, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+hallucination)  True
+ptext)  Jerzy Toeplitz's mother is Maria Toeplitz.
+curr_tokens)  ['<0x0A>Question:', 'Who', 'is', 'the', 'wife', 'of', 'the', 'director', 'of', 'film', 'The', 'Happiness', 'of', 'the', 'Katakuris?']
+curr_hit)  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+one example
+question:  Who is the mother of the director of film Polish-Russian War (Film)? demo:  [{'case': 'Question: When did the director of film Hypocrite (Film) die?\nAnswer: The film Hypocrite was directed by Miguel Morayta. Miguel Morayta died on 19 June 2013. So the answer is 19 June 2013.', 'ctxs': [], 'question': 'When did the director of film Hypocrite (Film) die?'}, {'case': 'Question: Are both Kurram Garhi and Trojkrsti located in the same country?\nAnswer: Kurram Garhi is located in the country of Pakistan. Trojkrsti is located in the country of Republic of Macedonia. Thus, they are not in the same country. So the answer is no.', 'ctxs': [], 'question': 'Are both Kurram Garhi and Trojkrsti located in the same country?'}, {'case': "Question: Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?\nAnswer: Coolie No. 1 (1995 film) was directed by David Dhawan. The Sensational Trial was directed by Karl Freund. David Dhawan's nationality is India. Karl Freund's nationality is Germany. Thus, they do not have the same nationality. So the answer is no.", 'ctxs': [], 'question': 'Do director of film Coolie No. 1 (1995 Film) and director of film The Sensational Trial have the same nationality?'}, {'case': "Question: Who is Boraqchin (Wife Of Ögedei)'s father-in-law?\nAnswer: Boraqchin is married to Ögedei Khan. Ögedei Khan's father is Genghis Khan. Thus, Boraqchin's father-in-law is Genghis Khan. So the answer is Genghis Khan.", 'ctxs': [], 'question': "Who is Boraqchin (Wife Of Ögedei)'s father-in-law?"}, {'case': 'Question: Who was born first out of Martin Hodge and Ivania Martinich?\nAnswer: Martin Hodge was born on 4 February 1959. Ivania Martinich was born on 25 July 1995. Thus, Martin Hodge was born first. So the answer is Martin Hodge.', 'ctxs': [], 'question': 'Who was born first out of Martin Hodge and Ivania Martinich?'}, {'case': 'Question: When did the director of film Laughter In Hell die?\nAnswer: The film Laughter In Hell was directed by Edward L. Cahn. Edward L. Cahn died on August 25, 1963. So the answer is August 25, 1963.', 'ctxs': [], 'question': 'When did the director of film Laughter In Hell die?'}] case:  Question: Who is the mother of the director of film Polish-Russian War (Film)?
+Answer:
+prediction:  The director of film Polish-Russian War (Film) is Jerzy Toeplitz. Jerzy Toeplitz's mother is Maria Toeplitz. So the answer is Maria Toeplitz.</s>

@@ -108,6 +108,10 @@ def main():
         qid = rd["qid"]
         pred = rd["prediction"]
         ground_truth, ground_truth_id, case = dataset[qid]
+        # gt_file = open("../result/errorcase/ground_truth.txt", "a")
+        # gt_file.write(f"ground_truth: {ground_truth}\n")
+        # gt_file.write(f"ground_truth_id: {ground_truth_id}\n")
+        # gt_file.write(f"case: {case}\n")
         if need_generate:
             pred = regenerate_answer(pred, tokenizer, model, case, demo) 
         pred = data.get_real_prediction(pred)

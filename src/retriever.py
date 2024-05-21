@@ -14,6 +14,7 @@ from beir.retrieval.evaluation import EvaluateRetrieval
 from beir.retrieval.search.lexical import BM25Search
 from beir.retrieval.search.lexical.elastic_search import ElasticSearch
 
+
 logging.basicConfig(level=logging.INFO) 
 logger = logging.getLogger(__name__)
 
@@ -194,6 +195,8 @@ class SGPT:
     cannot_encode_id = [6799132, 6799133, 6799134, 6799135, 6799136, 6799137, 6799138, 6799139, 8374206, 8374223, 9411956, 
         9885952, 11795988, 11893344, 12988125, 14919659, 16890347, 16898508]
     # 这些向量是 SGPT 不能 encode 的，设置为全 0 向量，点积为 0，不会影响检索
+    # These vectors cannot be encoded by SGPT. They are set to all-zero vectors,
+    # resulting in a dot product of 0 and will not affect retrieval.
 
     def __init__(
         self, 
@@ -210,6 +213,8 @@ class SGPT:
         self.SPECB_DOC_BOS = self.tokenizer.encode("{", add_special_tokens=False)[0]
         self.SPECB_DOC_EOS = self.tokenizer.encode("}", add_special_tokens=False)[0]
 
+        self.encode_and_save_to_file(passage_file, sgpt_encode_file_path)
+        
         logger.info(f"Building SGPT indexes")
 
         self.p_reps = []
@@ -254,8 +259,69 @@ class SGPT:
             
         docs_file = passage_file
         df = pd.read_csv(docs_file, delimiter='\t')
+        #print("head: ", df.head())
+        # print(df.head)
         self.docs = list(df['text'])
+        
 
+    def encode_and_save_to_file(self, passage_file, encode_file_path, batch_size=16):
+        df = pd.read_csv(passage_file, delimiter='\t')
+        os.makedirs(encode_file_path, exist_ok=True)
+
+        documents = df['text'].tolist()
+        num_batches = (len(documents) + batch_size - 1) // batch_size
+
+        for batch_idx in tqdm(range(num_batches), desc="Encoding Documents"):
+            batch_documents = documents[batch_idx * batch_size:(batch_idx + 1) * batch_size]
+            inputs = self.tokenizer(batch_documents, return_tensors='pt', padding=True, truncation=True)
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                embeddings = outputs.last_hidden_state.mean(dim=1)  
+
+            for i, embedding in enumerate(embeddings):
+                file_idx = batch_idx * batch_size + i
+                file_path = os.path.join(encode_file_path, f"{file_idx // 1000}_{file_idx % 1000}.pt")
+                torch.save(embedding, file_path)
+
+
+        # # 데이터를 SGPT로 encoding하고 파일로 저장
+        # for idx, row in tqdm(df.iterrows(), total=len(df), desc="Encoding Documents"):
+        #     document = row['text']
+        #     inputs = self.tokenizer(document, return_tensors='pt', padding=True, truncation=True)
+        #     with torch.no_grad():
+        #         outputs = self.model(**inputs)
+        #         embedding = outputs.last_hidden_state.mean(dim=1)  # 예시: 평균 풀링
+
+        #     # 파일 경로 설정
+        #     file_path = os.path.join(encode_file_path, f"{idx}.pt")
+
+        #     # 텐서를 파일로 저장
+        #     torch.save(embedding, file_path)
+        
+        # df = pd.read_csv(passage_file, delimiter='\t')
+
+        # # 첫 번째 인덱스의 문서만을 처리합니다.
+        # idx = 0
+        # row = df.iloc[idx]  # 첫 번째 행 가져오기
+        # document = row['text']
+        # inputs = self.tokenizer(document, return_tensors='pt', padding=True, truncation=True)
+        # with torch.no_grad():
+        #     outputs = self.model(**inputs)
+        #     embedding = outputs.last_hidden_state.mean(dim=1)  # 평균 풀링 예시
+
+        # # 인코딩 결과를 출력합니다.
+        # print("첫 번째 문서 내용:")
+        # print(document)
+        # print("첫 번째 문서 인코딩 결과:")
+        # print(embedding)
+
+        # # 파일 경로 설정
+        # file_path = os.path.join(encode_file_path, f"{idx}.pt")
+
+        # # 텐서를 파일로 저장
+        # torch.save(embedding, file_path)
+            
+            
 
     def tokenize_with_specb(self, texts, is_query):
         # Tokenize without padding
@@ -313,12 +379,15 @@ class SGPT:
         q_reps = self.get_weightedmean_embedding(
             self.tokenize_with_specb(queries, is_query=True)
         )
+        
+        print("q_reps: ", q_reps)
         q_reps.requires_grad_(False)
         q_reps_trans = torch.transpose(q_reps, 0, 1)
 
         topk_values_list = []
         topk_indices_list = []
         prev_count = 0
+        print("preps", self.p_reps)
         for p_rep, p_rep_norm in self.p_reps:
             sim = p_rep @ q_reps_trans.to(p_rep.device)
             sim = sim / p_rep_norm
@@ -329,7 +398,7 @@ class SGPT:
             topk_values_list.append(topk_values.to('cpu'))
             topk_indices_list.append(topk_indices.to('cpu') + prev_count)
             prev_count += p_rep.shape[0]
-
+        print("topk values: ", topk_values_list)
         all_topk_values = torch.cat(topk_values_list, dim=0)
         global_topk_values, global_topk_indices = torch.topk(all_topk_values, k=topk, dim=0)
 

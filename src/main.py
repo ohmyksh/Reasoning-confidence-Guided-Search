@@ -88,9 +88,19 @@ def main():
         batch = data[i]
         # measure total time
         inference_start_time = time.perf_counter()
+        # question_file = open("../result/errorcase/question_.txt", "a")
+        # question_file.write(f"Index: {i}\n")  # Write the index to the file
+        # question_file.write(f"question: {batch['question']}\n")
+        # question_file.write(f"demo: {batch['demo']}\n")
+        # question_file.write(f"case: {batch['case']}\n")
         pred = model.inference(batch["question"], batch["demo"], batch["case"])
         inference_end_time = time.perf_counter()
         total_time = (inference_end_time - inference_start_time)
+        
+        # print("one example")
+        # print("question: ", batch["question"], "demo: ", batch["demo"], "case: ", batch["case"])
+        # print("prediction: ", pred)
+        
         pred = pred.strip()
         ret = {
             "qid": batch["qid"], 
