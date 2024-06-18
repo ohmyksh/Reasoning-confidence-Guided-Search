@@ -21,7 +21,7 @@ While prompting Large Language Models (LLMs) for inference generation has been p
 ## Proposed Approach
 We structured the multi-hop QA task as a search process where the model traverses inference states to reach an answer. If hallucination is detected in the generation result, the model backtracks to regenerate correct inferences.
 
-<img src="framework.jpg" width="70%" alt="Framework"></img>  
+<img src="framework.jpg" width="60%" alt="Framework"></img>  
 
 ### Improvements in Query Construction
 1. **Attention to Full Context**: Instead of considering only the preceding tokens, the model uses attention to the entire context of the generated result.
