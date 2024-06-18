@@ -14,9 +14,9 @@ While prompting Large Language Models (LLMs) for inference generation has been p
   
 ## Baseline and State-of-the-Art Methods
 - **Baseline**: Fixed method alternating between retrieval and generation.
-- *** [IRCoT (ACL 2023)][https://arxiv.org/abs/2212.10509]
+[IRCoT (ACL 2023)][https://arxiv.org/abs/2212.10509]
 - **State-of-the-Art (SOTA)**: Identifies moments when the LLM lacks knowledge and needs to search for additional information, constructing queries accordingly. While this improved performance and efficiency, it relied on a heuristic that low generation probabilities indicated hallucination and only considered previously generated tokens for query construction, failing to capture semantic meaning.
-- *** [DRAGIN (ACL 2024)][https://arxiv.org/abs/2403.10081]
+[DRAGIN (ACL 2024)][https://arxiv.org/abs/2403.10081]
   
 ## Proposed Approach
 We structured the multi-hop QA task as a search process where the model traverses inference states to reach an answer. If hallucination is detected in the generation result, the model backtracks to regenerate correct inferences.
