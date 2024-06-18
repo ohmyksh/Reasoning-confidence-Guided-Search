@@ -9,7 +9,7 @@ This project investigates the application of the Retrieval-Augmented Generation 
 While prompting Large Language Models (LLMs) for inference generation has been proposed, it is only effective when the LLM possesses sufficient knowledge. To address knowledge gaps, the RAG framework incorporates external databases for information retrieval.
   
 ## Research Objectives
-1. **Identify Issues in Existing Methods**: Analyze existing multi-retrieval methods to identify their shortcomings.
+1. **Identify problems in Existing Methods**: Analyze existing RAG frameworks to identify their shortcomings.
 2. **Propose Solutions**: Develop a concrete plan to improve performance and efficiency.
   
 ## Baseline and State-of-the-Art Methods
@@ -19,8 +19,9 @@ While prompting Large Language Models (LLMs) for inference generation has been p
 - *** [DRAGIN (ACL 2024)][https://arxiv.org/abs/2403.10081]
   
 ## Proposed Approach
-### Structured Search Process
 We structured the multi-hop QA task as a search process where the model traverses inference states to reach an answer. If hallucination is detected in the generation result, the model backtracks to regenerate correct inferences.
+
+<img src="framework.jpg" width="70%" alt="Framework"></img>  
 
 ### Improvements in Query Construction
 1. **Attention to Full Context**: Instead of considering only the preceding tokens, the model uses attention to the entire context of the generated result.
