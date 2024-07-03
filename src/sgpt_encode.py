@@ -33,7 +33,7 @@ def encode_and_save_to_file(model_name_or_path, passage_file, encode_file_path, 
         inputs = tokenizer(batch_documents, return_tensors='pt', padding=True, truncation=True).to('cuda')
         with torch.no_grad():
             outputs = model(**inputs)
-            embeddings = outputs.last_hidden_state.mean(dim=1)  # 예시: 평균 풀링
+            embeddings = outputs.last_hidden_state.mean(dim=1)  
 
         for i, embedding in enumerate(embeddings):
             file_idx = batch_idx * batch_size + i
