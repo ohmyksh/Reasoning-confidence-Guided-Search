@@ -18,7 +18,7 @@ While prompting Large Language Models (LLMs) for inference generation has been p
 - **State-of-the-Art (SOTA)**: DRAGIN aims to dynamically determine when to retrieve and what to retrieve during the generation process. It criticizes the existing IRCoT method for being inefficient in terms of time and cost because it always performs a search without considering the necessity of it. Additionally, using the generated sentence as the search query might input irrelevant and unnecessary information into the model, affecting the accuracy of the generated response. Therefore, considering these two elements is crucial for performance and efficiency.
 [DRAGIN (ACL 2024)](https://arxiv.org/abs/2403.10081)
 
-<img src="compare.jpg" width="40%" alt="Comparison"></img>  
+<img src="compare.png" width="40%" alt="Comparison"></img>  
 
 ### Analysis of Issues in SOTA Models
 
