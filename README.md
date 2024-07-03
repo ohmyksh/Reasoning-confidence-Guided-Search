@@ -9,6 +9,7 @@ This research aimed to develop a system where a large language model (LLM) perfo
 <img src="framework.jpg" width="70%" alt="Framework"></img> 
   
 Large language models (LLMs) are trained on extensive real-world knowledge and show human-like performance on various benchmarks. However, complex real-world question answering remains a challenge. Wei et al. proposed Chain-of-Thought prompting to enhance step-by-step reasoning by using examples with problems and solutions. This method relies on all necessary information being provided as input or stored in the model’s parameters. For complex multi-hop question answering, not all required knowledge is available in the input, and parametric knowledge may not be up-to-date.  
+  
 To address this, Retrieval-Augmented Generation (RAG) uses non-parametric knowledge from external sources, which can be updated easily and improve accuracy. However, a single retrieval approach has limitations, as multi-hop question answering may require information not directly related to the query. Multiple retrievals are needed to search various documents for accurate responses. Therefore, this research aims to advance the RAG framework to perform multi-hop question answering using LLMs.
 
 ## Baseline and State-of-the-Art Methods
