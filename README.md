@@ -12,7 +12,7 @@ Large language models (LLMs) are trained on extensive real-world knowledge and s
   
 To address this, Retrieval-Augmented Generation (RAG) uses non-parametric knowledge from external sources, which can be updated easily and improve accuracy. However, a single retrieval approach has limitations, as multi-hop question answering may require information not directly related to the query. Multiple retrievals are needed to search various documents for accurate responses. Therefore, this research aims to advance the RAG framework to perform multi-hop question answering using LLMs.
 
-## Baseline and State-of-the-Art Methods
+## Previous Approaches
 - **Baseline**: IRCoT adopts a simple and fixed approach to retrieving documents for multi-hop question answering. Each time the large language model generates the next reasoning sentence based on the prompt, it always performs a search, using the most recently generated sentence directly as the query. 
 [IRCoT (ACL 2023)](https://arxiv.org/abs/2212.10509)
 - **State-of-the-Art (SOTA)**: DRAGIN aims to dynamically determine when to retrieve and what to retrieve during the generation process. It criticizes the existing IRCoT method for being inefficient in terms of time and cost because it always performs a search without considering the necessity of it. Additionally, using the generated sentence as the search query might input irrelevant and unnecessary information into the model, affecting the accuracy of the generated response. Therefore, considering these two elements is crucial for performance and efficiency.
@@ -31,7 +31,7 @@ When retrieval is deemed necessary, DRAGIN constructs queries by selecting the t
 Recognizing these limitations highlights the potential for enhancing both the determination of when retrieval is necessary and the construction of effective search queries that fully consider the semantic context.
 
 
-## Proposed Approach
+## Method
 The multi-hop QA task can be structured as a search process where the model traverses inference states to reach an answer. If hallucination is detected in the generation result, the model backtracks to regenerate correct inferences.
 
 Starting from the initial query, the model progresses through intermediate states, generating a final response by traversing through these states. The detailed process of moving from one state to the next can be seen in below Figure. If hallucination is not detected in the generated results at a particular state, the model moves on to the next state and continues generating until it meets the termination condition. However, if hallucination is detected, the model constructs a search query to retrieve the necessary documents. These documents are then incorporated into the model's input, and the generation process is repeated.
