@@ -1,20 +1,16 @@
 # Reasoning-Confidence Guided Search For Multi-Hop Question Answering
-## Project Description
 This is my research project for POSTECH CSED499A.
 * Advised by Wook-Shin Han 
 * Data Systems Lab @ POSTECH    
 
-<img src="framework.jpg" width="70%" alt="Framework"></img> 
+## Introduction
+This research aimed to develop a system where a large language model (LLM) performs multi-hop question answering (QA).  
 
-This project investigates the application of the Retrieval-Augmented Generation (RAG) framework for multi-hop question answering (QA), where multiple documents need to be read and multi-step reasoning is required to generate an answer.  
+<img src="framework.jpg" width="70%" alt="Framework"></img> 
   
-## Background
-While prompting Large Language Models (LLMs) for inference generation has been proposed, it is only effective when the LLM possesses sufficient knowledge. To address knowledge gaps, the RAG framework incorporates external databases for information retrieval.
-  
-## Research Objectives
-- **Identify problems in Existing Methods**: Analyze existing RAG frameworks to identify their shortcomings.
-- **Propose Solutions**: Develop a concrete plan to improve performance and efficiency.
-  
+Large language models (LLMs) are trained on extensive real-world knowledge and show human-like performance on various benchmarks. However, complex real-world question answering remains a challenge. Wei et al. proposed Chain-of-Thought prompting to enhance step-by-step reasoning by using examples with problems and solutions. This method relies on all necessary information being provided as input or stored in the model’s parameters. For complex multi-hop question answering, not all required knowledge is available in the input, and parametric knowledge may not be up-to-date.  
+To address this, Retrieval-Augmented Generation (RAG) uses non-parametric knowledge from external sources, which can be updated easily and improve accuracy. However, a single retrieval approach has limitations, as multi-hop question answering may require information not directly related to the query. Multiple retrievals are needed to search various documents for accurate responses. Therefore, this research aims to advance the RAG framework to perform multi-hop question answering using LLMs.
+
 ## Baseline and State-of-the-Art Methods
 - **Baseline**: IRCoT adopts a simple and fixed approach to retrieving documents for multi-hop question answering. Each time the large language model generates the next reasoning sentence based on the prompt, it always performs a search, using the most recently generated sentence directly as the query. 
 [IRCoT (ACL 2023)](https://arxiv.org/abs/2212.10509)
