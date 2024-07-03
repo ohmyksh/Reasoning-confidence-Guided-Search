@@ -74,7 +74,7 @@ There were problems where the generated answers were marked incorrect during eva
 
 The statistics of 50 results categorized according to the above issues are shown in the following graph. Therefore, it was confirmed that the current framework fails to accurately detect hallucinations and correct errors in the generated results, leading to incorrect final responses.
 
-<img src="error-case.png" width="35%" alt="error-case"></img> 
+<img src="error-case.png" width="40%" alt="error-case"></img> 
 <img src="error.png" width="30%" alt="error"></img> 
 
 
