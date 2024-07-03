@@ -18,7 +18,7 @@ While prompting Large Language Models (LLMs) for inference generation has been p
 - **State-of-the-Art (SOTA)**: DRAGIN aims to dynamically determine when to retrieve and what to retrieve during the generation process. It criticizes the existing IRCoT method for being inefficient in terms of time and cost because it always performs a search without considering the necessity of it. Additionally, using the generated sentence as the search query might input irrelevant and unnecessary information into the model, affecting the accuracy of the generated response. Therefore, considering these two elements is crucial for performance and efficiency.
 [DRAGIN (ACL 2024)](https://arxiv.org/abs/2403.10081)
 
-<img src="compare.png" width="80%" alt="Comparison"></img>  
+<img src="compare.png" width="60%" alt="Comparison"></img>  
 
 ### Analysis of Issues in SOTA Models
 
@@ -41,7 +41,7 @@ Starting from the initial query, the model progresses through intermediate state
 ### Improvements in Query Construction
 This research focused on improving the query construction process. The existing SOTA model extracted and concatenated important tokens from previously generated tokens to form a query. This approach failed to capture the semantic elements of the token for which information was sought. For example, consider a situation where incorrect information about the university where Einstein sought a job was generated. Listing the relevant tokens from those preceding the incorrectly specified university name would form a query as shown in the figure below.
 
-<img src="example-sota-query.png" width="80%" alt="sota-query"></img> 
+<img src="example-sota-query.png" width="65%" alt="sota-query"></img> 
 
 Considering only the preceding context and using a simple sequence of tokens approach fails to account for the semantic information that reflects the intent of the initial query and the context of the generated results. To address this, I devised and applied two query construction methods:
 
@@ -51,7 +51,7 @@ Attention weights reflect the model's evaluation of the importance of each token
 ii) **LLM Generated Query**: 
 The LLM generates queries based on the given context. Given that LLMs are trained on vast amounts of data, they excel in understanding context and generating semantically relevant responses. Query expansion using LLMs has been proven effective in previous research, demonstrating their capability in reformulating or creating new queries. This method allows for the generation of more meaningful queries that consider both the intent of the initial query and the context.
 
-<img src="zeroshot-query.png" width="80%" alt="zeroshot"></img> 
+<img src="zeroshot-query.png" width="70%" alt="zeroshot"></img> 
 
 ## Result & Error Case Analysis
 
