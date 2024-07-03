@@ -194,9 +194,6 @@ ElasticSearch.hit_template = elasticsearch_hit_template
 class SGPT:
     cannot_encode_id = [6799132, 6799133, 6799134, 6799135, 6799136, 6799137, 6799138, 6799139, 8374206, 8374223, 9411956, 
         9885952, 11795988, 11893344, 12988125, 14919659, 16890347, 16898508]
-    # 这些向量是 SGPT 不能 encode 的，设置为全 0 向量，点积为 0，不会影响检索
-    # These vectors cannot be encoded by SGPT. They are set to all-zero vectors,
-    # resulting in a dot product of 0 and will not affect retrieval.
 
     def __init__(
         self, 
@@ -284,42 +281,31 @@ class SGPT:
                 torch.save(embedding, file_path)
 
 
-        # # 데이터를 SGPT로 encoding하고 파일로 저장
-        # for idx, row in tqdm(df.iterrows(), total=len(df), desc="Encoding Documents"):
-        #     document = row['text']
-        #     inputs = self.tokenizer(document, return_tensors='pt', padding=True, truncation=True)
-        #     with torch.no_grad():
-        #         outputs = self.model(**inputs)
-        #         embedding = outputs.last_hidden_state.mean(dim=1)  # 예시: 평균 풀링
+        for idx, row in tqdm(df.iterrows(), total=len(df), desc="Encoding Documents"):
+            document = row['text']
+            inputs = self.tokenizer(document, return_tensors='pt', padding=True, truncation=True)
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                embedding = outputs.last_hidden_state.mean(dim=1) 
 
-        #     # 파일 경로 설정
-        #     file_path = os.path.join(encode_file_path, f"{idx}.pt")
-
-        #     # 텐서를 파일로 저장
-        #     torch.save(embedding, file_path)
+            file_path = os.path.join(encode_file_path, f"{idx}.pt")
+            torch.save(embedding, file_path)
         
-        # df = pd.read_csv(passage_file, delimiter='\t')
+        df = pd.read_csv(passage_file, delimiter='\t')
 
-        # # 첫 번째 인덱스의 문서만을 처리합니다.
-        # idx = 0
-        # row = df.iloc[idx]  # 첫 번째 행 가져오기
-        # document = row['text']
-        # inputs = self.tokenizer(document, return_tensors='pt', padding=True, truncation=True)
-        # with torch.no_grad():
-        #     outputs = self.model(**inputs)
-        #     embedding = outputs.last_hidden_state.mean(dim=1)  # 평균 풀링 예시
-
-        # # 인코딩 결과를 출력합니다.
-        # print("첫 번째 문서 내용:")
+        idx = 0
+        row = df.iloc[idx] 
+        document = row['text']
+        inputs = self.tokenizer(document, return_tensors='pt', padding=True, truncation=True)
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+            embedding = outputs.last_hidden_state.mean(dim=1)  
+            
         # print(document)
-        # print("첫 번째 문서 인코딩 결과:")
         # print(embedding)
 
-        # # 파일 경로 설정
-        # file_path = os.path.join(encode_file_path, f"{idx}.pt")
-
-        # # 텐서를 파일로 저장
-        # torch.save(embedding, file_path)
+        file_path = os.path.join(encode_file_path, f"{idx}.pt")
+        torch.save(embedding, file_path)
             
             
 
