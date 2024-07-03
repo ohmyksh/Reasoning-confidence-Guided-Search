@@ -7,12 +7,12 @@ import logging
 from data import StrategyQA, WikiMultiHopQA, HotpotQA, IIRC
 from generate import *
 
-logging.basicConfig(level=logging.INFO) # 기본 로그 설정 구성
-logger = logging.getLogger(__name__) # 지정된 이름으로 로그 객체 만듬
+logging.basicConfig(level=logging.INFO) # Set up basic logging configuration
+logger = logging.getLogger(__name__) # Create a logger object with the specified name
 
 
 def get_args(): # 
-    parser = argparse.ArgumentParser() # 명령행 인자를 파싱하기 위한 ArgumentParser 객체를 생성
+    parser = argparse.ArgumentParser() # Create an ArgumentParser object to parse command-line 
     parser.add_argument("-c", "--config_path", type=str, required=True)
     args = parser.parse_args()
     config_path = args.config_path
@@ -66,7 +66,6 @@ def main():
         samples = min(len(data), args.sample)
         data = data.select(range(samples))
    
-    # 根据 method 选择不同的生成策略
     if args.method == "non-retrieval":
         model = BasicRAG(args)
     elif args.method == "single-retrieval":
