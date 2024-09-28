@@ -15,9 +15,9 @@ To address this, Retrieval-Augmented Generation (RAG) uses non-parametric knowle
 
 ## Previous Approaches
 - **Baseline**: IRCoT adopts a simple and fixed approach to retrieving documents for multi-hop question answering. Each time the large language model generates the next reasoning sentence based on the prompt, it always performs a search, using the most recently generated sentence directly as the query. 
-[IRCoT (ACL 2023)](https://arxiv.org/abs/2212.10509)
+[(IRCoT, ACL 2023)](https://arxiv.org/abs/2212.10509)
 - **State-of-the-Art (SOTA)**: DRAGIN aims to dynamically determine when to retrieve and what to retrieve during the generation process. It criticizes the existing IRCoT method for being inefficient in terms of time and cost because it always performs a search without considering the necessity of it. Additionally, using the generated sentence as the search query might input irrelevant and unnecessary information into the model, affecting the accuracy of the generated response. Therefore, considering these two elements is crucial for performance and efficiency.
-[DRAGIN (ACL 2024)](https://arxiv.org/abs/2403.10081)
+[(DRAGIN, ACL 2024)](https://arxiv.org/abs/2403.10081)
 
 <img src="fig\compare.png" width="55%" alt="Comparison"></img>  
 
