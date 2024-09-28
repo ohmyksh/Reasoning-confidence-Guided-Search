@@ -1,7 +1,8 @@
 # Reasoning-Confidence Guided Search For Multi-Hop Question Answering
 This is my research project for POSTECH CSED499A.
 * Advised by Wook-Shin Han 
-* Data Systems Lab @ POSTECH    
+* Data Systems Lab @ POSTECH
+* Poster: [Link](https://drive.google.com/file/d/1xwj40K0LSmvtO7afDf7Cbkusjau0IxdO/view?usp=sharing)
 
 ## Introduction
 This research aimed to develop a system where a large language model (LLM) performs multi-hop question answering (QA).  
