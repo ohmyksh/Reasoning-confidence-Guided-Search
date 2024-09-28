@@ -6,7 +6,7 @@ This is my research project for POSTECH CSED499A.
 ## Introduction
 This research aimed to develop a system where a large language model (LLM) performs multi-hop question answering (QA).  
 
-<img src="framework.jpg" width="70%" alt="Framework"></img> 
+<img src="fig\framework.jpg" width="70%" alt="Framework"></img> 
   
 Large language models (LLMs) are trained on extensive real-world knowledge and show human-like performance on various benchmarks. However, complex real-world question answering remains a challenge. Wei et al. proposed Chain-of-Thought prompting to enhance step-by-step reasoning by using examples with problems and solutions. This method relies on all necessary information being provided as input or stored in the model’s parameters. For complex multi-hop question answering, not all required knowledge is available in the input, and parametric knowledge may not be up-to-date.  
   
@@ -18,7 +18,7 @@ To address this, Retrieval-Augmented Generation (RAG) uses non-parametric knowle
 - **State-of-the-Art (SOTA)**: DRAGIN aims to dynamically determine when to retrieve and what to retrieve during the generation process. It criticizes the existing IRCoT method for being inefficient in terms of time and cost because it always performs a search without considering the necessity of it. Additionally, using the generated sentence as the search query might input irrelevant and unnecessary information into the model, affecting the accuracy of the generated response. Therefore, considering these two elements is crucial for performance and efficiency.
 [DRAGIN (ACL 2024)](https://arxiv.org/abs/2403.10081)
 
-<img src="compare.png" width="55%" alt="Comparison"></img>  
+<img src="fig\compare.png" width="55%" alt="Comparison"></img>  
 
 ### Analysis of Issues in SOTA Models
 
@@ -36,12 +36,12 @@ The multi-hop QA task can be structured as a search process where the model trav
 
 Starting from the initial query, the model progresses through intermediate states, generating a final response by traversing through these states. The detailed process of moving from one state to the next can be seen in below Figure. If hallucination is not detected in the generated results at a particular state, the model moves on to the next state and continues generating until it meets the termination condition. However, if hallucination is detected, the model constructs a search query to retrieve the necessary documents. These documents are then incorporated into the model's input, and the generation process is repeated.
 
-<img src="framework.jpg" width="70%" alt="Framework"></img>  
+<img src="fig\framework.jpg" width="70%" alt="Framework"></img>  
 
 ### Improvements in Query Construction
 This research focused on improving the query construction process. The existing SOTA model extracted and concatenated important tokens from previously generated tokens to form a query. This approach failed to capture the semantic elements of the token for which information was sought. For example, consider a situation where incorrect information about the university where Einstein sought a job was generated. Listing the relevant tokens from those preceding the incorrectly specified university name would form a query as shown in the figure below.
 
-<img src="example-sota-query.png" width="65%" alt="sota-query"></img> 
+<img src="fig\example-sota-query.png" width="65%" alt="sota-query"></img> 
 
 Considering only the preceding context and using a simple sequence of tokens approach fails to account for the semantic information that reflects the intent of the initial query and the context of the generated results. To address this, I devised and applied two query construction methods:
 
@@ -51,14 +51,14 @@ Attention weights reflect the model's evaluation of the importance of each token
 - **LLM Generated Query**: 
 The LLM generates queries based on the given context. Given that LLMs are trained on vast amounts of data, they excel in understanding context and generating semantically relevant responses. Query expansion using LLMs has been proven effective in previous research, demonstrating their capability in reformulating or creating new queries. This method allows for the generation of more meaningful queries that consider both the intent of the initial query and the context.
 
-<img src="zeroshot-query.png" width="70%" alt="zeroshot"></img> 
+<img src="fig\zeroshot-query.png" width="70%" alt="zeroshot"></img> 
 
 ## Result & Error Case Analysis
 
 ### Result
 I conducted experiments comparing query construction methods on two representative multi-hop question answering benchmarks using the Llama-8B-instruct model and BM25 as the retriever. As there was no significant performance change, I further analyzed the error cases.
 
-<img src="result.png" width="60%" alt="result"></img> 
+<img src="fig\result.png" width="60%" alt="result"></img> 
 
 ### Error Case
 I identified two main error sources.
